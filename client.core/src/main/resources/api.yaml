@@ -3,27 +3,32 @@ info:
   title: Car Hire API
   version: 0.1.0
   contact:
-    name: Vlad Carcu
+    name: Dragomir Alin
   description: Car Hire API
 servers:
-  - url: http://localhost:{port}
+  - url: http://localhost:8080
     description: local environment
     variables:
       port:
         default: '8080'
 tags:
   - name: user
-    description: User resource
+    description: User resource endpoint
+  - name: fleet
+    description: Fleet management resource endpoint
+  - name: rental
+    description: Rental resource endpoint
 
+security:
+  - oAuth:
+      - write
+      - read
 paths:
-  # The endpoints for the user resource
   /user:
-
-    # Get all users
     get:
       tags:
         - user
-      summary: get users
+      summary: get all users
       description: returns a list of all the users, without any filtering
       operationId: getUsers
       responses:
@@ -34,22 +39,22 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserDTO'
+                  $ref: '#/components/schemas/UserResponseDTO'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/ServerError'
-
-    # Add a new user
     post:
       tags:
         - user
       summary: add a new user
-      description: adds a new user and returns its id
+      description: adds a new user and returns it
       operationId: addUser
       requestBody:
         description: The data of the user to insert.
@@ -59,14 +64,14 @@ paths:
             schema:
               $ref: '#/components/schemas/UserDTO'
             example:
-              email: vladcarcu@email.com
-              username: vladcarcu
-              password: secret
-              firstName: Vlad
-              lastName: Carcu
-              countryOfResidence:
-                id: 1
-              driverLicense: BV123456
+              email: alin@carhire.com
+              password: mypa$$w0rd!@$
+              username: dragomiralin
+              firstname: Dragomir
+              title: Employee
+              lastname: Alin
+              countryofresidence: ROU
+              driverlicensenumber: 221004
               status: ACTIVE
       responses:
         '201':
@@ -75,49 +80,57 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/ServerError'
 
-  # The endpoints for individual user related operations
   /user/{id}:
-    parameters:
-      - in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-          format: int32
-
-    # Get a user by id
     get:
       tags:
         - user
-      summary: get a user
-      description: returns the details for a user, based on id, except the password
+      summary: get user
+      description: returns the details for a user, based on id
       operationId: getUser
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserDTO'
+                $ref: '#/components/schemas/UserResponseDTO'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/ServerError'
-
-    # Delete a user by id
-    delete:
+    patch:
       tags:
         - user
-      summary: delete a user
-      description: soft deletes a user
-      operationId: deleteUser
+      summary: update user
+      description: update user
+      operationId: updateUser
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/PatchBody'
       responses:
         '200':
           description: success
@@ -125,32 +138,204 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    delete:
+      tags:
+        - user
+      summary: remove a user
+      description: delete a user identified by id
+      operationId: removeUser
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/ServerError'
 
-    # Add a new user
-    patch:
+  /fleet:
+    get:
       tags:
-        - user
-      summary: update an existing user
-      description: allows updating an existing user. Existing fields can't be set to null. The id, username, password and status are always ignored.
-      operationId: patchUser
+        - fleet
+      summary: get all cars details
+      description: return a list of all cars details, without any filtering
+      operationId: getCars
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CarResponseDTO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      tags:
+        - fleet
+      summary: add a new car
+      description: add a new car and returns it
+      operationId: addCar
       requestBody:
-        description: The fields of the user to change
+        description: The data of the car to insert.
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserDTO'
+              $ref: '#/components/schemas/CarDTO'
             example:
-              email: vladcarcu@email.com
-              firstName: Vlad
-              lastName: Carcu
-              countryOfResidence:
-                id: 2
-              driverLicense: BV123456
+              make: test
+              model: Dacia
+              year: 2019
+              mileage: 120031
+              fuel: Diesel
+              status: ACTIVE
+      responses:
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /fleet/status/{status}:
+    get:
+      tags:
+        - fleet
+      summary: get all cars details by status
+      description: return a list of all cars details by cars, without any filtering
+      operationId: getCarsByStatus
+      parameters:
+        - in: path
+          name: status
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CarResponseDTO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /fleet/{id}:
+    get:
+      tags:
+        - fleet
+      summary: get a fleet
+      description: returns the details for an user, based on id
+      operationId: getCar
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarResponseDTO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    patch:
+      tags:
+        - fleet
+      summary: update car
+      description: update car
+      operationId: updateCar
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/PatchBody'
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarDTO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    delete:
+      tags:
+        - fleet
+      summary: remove a car
+      description: delete a car identified by id
+      operationId: removeCar
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: success
@@ -158,19 +343,23 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/ServerError'
 
 components:
   responses:
     Created:
-      description: the id of the created entity
+      description: created with success
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/CreatedDTO'
     NotFound:
-      description: the results are either empty or couldn't be found
+      description: not found
     Unauthorized:
       description: unauthorized
     BadRequest:
@@ -187,7 +376,52 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorDTO'
+
+  requestBodies:
+    PatchBody:
+      description: A message in JsonPatch format
+      required: true
+      content:
+        application/json-patch+json:
+          schema:
+            $ref: '#/components/schemas/PatchBody'
+
   schemas:
+    CreatedDTO:
+      type: object
+      properties:
+        id:
+          type: string
+    PatchBody:
+      items:
+        $ref: '#/components/schemas/JsonPatchDTO'
+    JsonPatchDTO:
+      type: object
+      description: A JSONPatch document as defined by RFC 6902.
+      required:
+        - 'op'
+        - 'path'
+        - 'value'
+      properties:
+        op:
+          type: string
+          description: The operation to be performed
+          enum:
+            - 'add'
+            - 'remove'
+            - 'replace'
+            - 'move'
+            - 'copy'
+            - 'test'
+        path:
+          type: string
+          description: A JSON-Pointer
+        value:
+          type: object
+          description: The value to be used within the operations.
+        from:
+          type: string
+          description: A string containing a JSON Pointer value.
     ValidationDTO:
       type: object
       properties:
@@ -204,117 +438,132 @@ components:
           type: string
         message:
           type: string
-    UserDTO:
+    UserDefaultObject:
       type: object
       properties:
-        id:
-          type: integer
-          format: int32
-          description: user id
         email:
           type: string
-          format: email
-          example: vladcarcu@email.com
-          description: user email address
+          description: email of the user
         username:
           type: string
-          example: vladcarcu
-        password:
+          description: username of the user
+        firstname:
           type: string
-          format: password
-          example: secret
-        firstName:
+          description: first name of the user
+        lastname:
           type: string
-          example: Vlad
-          description: the first name of the user
-        lastName:
+          description: last name of the user
+        countryofresidence:
           type: string
-          example: Carcu
-          description: the last name of the user
-        countryOfResidence:
-          $ref: '#/components/schemas/CountryDTO'
-        driverLicense:
+          description: country of residence of the user
+        title:
           type: string
-          example: BV123456
-          description: the serie and number of the user's driver's license
-        status:
-          $ref: '#/components/schemas/UserStatus'
-    CountryDTO:
-      type: object
-      properties:
-        id:
+          description: title of the user
+        driverlicensenumber:
           type: integer
           format: int32
-          description: country id
-        name:
+          description: driver`s license number of the user
+        status:
           type: string
-          example: Romania
-          description: the name of the country
-        isoCode:
-          type: string
-          example: ROU
-          description: the iso code of the country
-    UserStatus:
-      type: string
-      enum:
-        - ACTIVE
-        - DELETED
-
+          enum: [ ACTIVE, CANCELLED ]
+          description: the status of the user
+    UserResponseDTO:
+      allOf:
+        - $ref: '#/components/schemas/UserDefaultObject'
+        - type: object
+          properties:
+            id:
+              type: string
+              description: id of the user
+    UserDTO:
+      allOf:
+        - $ref: '#/components/schemas/UserDefaultObject'
+        - type: object
+          properties:
+            password:
+              type: string
+              format: password
+              description: password of the user
     CarDTO:
       type: object
       properties:
-        id:
-          type: integer
-          format: int32
-          description: car id
         make:
           type: string
-          example: VW
-          description: the make of the car
+          description: make param
         model:
           type: string
-          example: Golf 7
-          description: the model of the car
+          description: model of the car
         year:
           type: integer
           format: int32
-          example: 2016
-          description: the year in which the car was built
+          description: year of manufacture of the car
         mileage:
           type: integer
           format: int32
-          example: 12350
-          description: the approximate mileage when the car is being picked up
+          description: car mileage
         fuel:
-          $ref: '#/components/schemas/FuelType'
-        carClass:
-          $ref: '#/components/schemas/CarClass'
+          type: string
+          description: type of fuel
+        carClazz:
+          type: string
         status:
-          $ref: '#/components/schemas/CarStatus'
-    FuelType:
-      type: string
-      enum:
-        - GAS
-        - DIESEL
-    CarClass:
-      type: string
-      enum:
-        - A-segment
-        - B-segment
-        - C-segment
-        - D-segment
-        - E-segment
-        - F-segment
-    CarStatus:
-      type: string
-      enum:
-        - ACTIVE
-        - DELETED
+          type: string
+          enum: [ACTIVE, CANCELLED]
+          description: the status of the car
 
-    CreatedDTO:
+    CarResponseDTO:
+      allOf:
+        - $ref: '#/components/schemas/CarDTO'
+        - type: object
+          properties:
+            id:
+              type: string
+              description: id car
+    RentalDefaultObject:
       type: object
       properties:
-        id:
-          type: integer
-          format: int32
-          description: the id of the created entity
+        startDate:
+          type: string
+          description: start date and time
+          example: "2020-11-14T12:30:00Z"
+        endDate:
+          type: string
+          description: end date and time
+          example: "2020-11-19T12:30:00Z"
+        status:
+          type: string
+          enum: [ ACTIVE, CANCELLED ]
+          description: the status of the
+    RentalDTO:
+      allOf:
+        - $ref: '#/components/schemas/RentalDefaultObject'
+        - type: object
+          properties:
+            user:
+              type: string
+              description: user id
+            car:
+              type: string
+              description: car id
+    RentalResponseDTO:
+      allOf:
+        - $ref: '#/components/schemas/RentalDefaultObject'
+        - type: object
+          properties:
+            id:
+              type: string
+              description: rent id
+            user:
+              $ref: '#/components/schemas/UserResponseDTO'
+            car:
+              $ref: '#/components/schemas/CarResponseDTO'
+  securitySchemes:
+    oAuth:
+      type: oauth2
+      description: This API uses OAuth2 with the password flow
+      flows:
+        password:
+          tokenUrl: /oauth/token
+          scopes:
+            read: get information from the API
+            write: use the API to make changes to the supporting data model

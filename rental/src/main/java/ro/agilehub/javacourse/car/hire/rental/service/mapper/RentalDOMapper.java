@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ro.agilehub.javacourse.car.hire.rental.controller.mapper.CarDTOMapper;
 import ro.agilehub.javacourse.car.hire.rental.controller.mapper.UserDTOMapper;
-import ro.agilehub.javacourse.car.hire.rental.service.entity.Rental;
+import ro.agilehub.javacourse.car.hire.rental.entity.Rental;
 import ro.agilehub.javacourse.car.hire.rental.service.domain.CarDO;
 import ro.agilehub.javacourse.car.hire.rental.service.domain.RentalDO;
 import ro.agilehub.javacourse.car.hire.rental.service.domain.UserDO;

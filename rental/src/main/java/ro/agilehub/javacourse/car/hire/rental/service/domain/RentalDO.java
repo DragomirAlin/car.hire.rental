@@ -1,7 +1,7 @@
 package ro.agilehub.javacourse.car.hire.rental.service.domain;
 
 import lombok.*;
-import ro.agilehub.javacourse.car.hire.rental.service.entity.Status;
+import ro.agilehub.javacourse.car.hire.rental.entity.Status;
 
 @Data
 @EqualsAndHashCode(of = "id")

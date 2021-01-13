@@ -1,4 +1,5 @@
-package ro.agilehub.javacourse.car.hire.rental.service.entity;
+package ro.agilehub.javacourse.car.hire.rental.entity;
+
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,5 +29,3 @@ public class Rental {
 
 
 }
-
-

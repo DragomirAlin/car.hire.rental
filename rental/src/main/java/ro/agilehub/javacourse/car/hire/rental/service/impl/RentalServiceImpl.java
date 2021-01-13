@@ -3,12 +3,12 @@ package ro.agilehub.javacourse.car.hire.rental.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ro.agilehub.javacourse.car.hire.rental.service.entity.Rental;
+import ro.agilehub.javacourse.car.hire.rental.client.core.specification.UserApi;
+import ro.agilehub.javacourse.car.hire.rental.entity.Rental;
 import ro.agilehub.javacourse.car.hire.rental.repository.RentalRepository;
 import ro.agilehub.javacourse.car.hire.rental.service.RentalService;
 import ro.agilehub.javacourse.car.hire.rental.service.domain.RentalDO;
 import ro.agilehub.javacourse.car.hire.rental.service.mapper.RentalDOMapper;
-import ro.agilehub.javacourse.car.hire.rental.service.model.JsonPatch;
 
 @Service
 @RequiredArgsConstructor
@@ -17,10 +17,11 @@ public class RentalServiceImpl implements RentalService {
     private final RentalRepository rentalRepository;
     private final RentalDOMapper mapper;
     private final ObjectMapper objectMapper;
+    private final UserApi userApi;
 
     @Override
     public String addRent(RentalDO rentalDO) {
-        var rent = mapper.toRental(rentalDO);
+        Rental rent = mapper.toRental(rentalDO);
 
         return rentalRepository.save(rent)
                 .get_id()
