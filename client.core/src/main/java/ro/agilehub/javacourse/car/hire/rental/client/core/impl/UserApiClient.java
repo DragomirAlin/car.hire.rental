@@ -6,8 +6,6 @@ import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import ro.agilehub.javacourse.car.hire.rental.client.core.model.UserDTO;
 import ro.agilehub.javacourse.car.hire.rental.client.core.model.UserResponseDTO;
 import ro.agilehub.javacourse.car.hire.rental.client.core.specification.UserApi;
 
@@ -17,6 +15,7 @@ import java.util.NoSuchElementException;
 public interface UserApiClient extends UserApi {
     String CORE = "core";
 
+    @Override
     @CircuitBreaker(name = CORE, fallbackMethod = "coreFallback")
     @RateLimiter(name = CORE)
     @GetMapping(value = "/user/{id}")

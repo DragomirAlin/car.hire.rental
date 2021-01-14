@@ -2,7 +2,9 @@ package ro.agilehub.javacourse.car.hire.rental.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
+import ro.agilehub.javacourse.car.hire.rental.client.core.specification.FleetApi;
 import ro.agilehub.javacourse.car.hire.rental.client.core.specification.UserApi;
 import ro.agilehub.javacourse.car.hire.rental.entity.Rental;
 import ro.agilehub.javacourse.car.hire.rental.repository.RentalRepository;
@@ -13,11 +15,11 @@ import ro.agilehub.javacourse.car.hire.rental.service.mapper.RentalDOMapper;
 @Service
 @RequiredArgsConstructor
 public class RentalServiceImpl implements RentalService {
-
     private final RentalRepository rentalRepository;
     private final RentalDOMapper mapper;
     private final ObjectMapper objectMapper;
     private final UserApi userApi;
+    private final FleetApi carApi;
 
     @Override
     public String addRent(RentalDO rentalDO) {
@@ -28,15 +30,15 @@ public class RentalServiceImpl implements RentalService {
                 .toString();
     }
 
-//    @Override
-//    public void removeRent(String id) {
-//        var rent = rentalRepository
-//                .findById(new ObjectId(id))
-//                .orElseThrow();
-//
-//        rentalRepository.delete(rent);
-//    }
-//
+    @Override
+    public void removeRent(String id) {
+        var rent = rentalRepository
+                .findById(new ObjectId(id))
+                .orElseThrow();
+
+        rentalRepository.delete(rent);
+    }
+
 //    @Override
 //    public RentalDO findById(String id) {
 //        return rentalRepository
@@ -71,7 +73,7 @@ public class RentalServiceImpl implements RentalService {
 //
 //        return objectMapper.treeToValue(patched, Rental.class);
 //    }
-
+//
 //    private RentalDO map(Rental rental) {
 //        var carDO = fleetService.findById(rental.getCar_id());
 //        var userDO = userService.findById(rental.getUser_id());

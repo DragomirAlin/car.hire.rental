@@ -1,12 +1,21 @@
 package ro.agilehub.javacourse.car.hire.rental.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import ro.agilehub.javacourse.car.hire.rental.api.model.CreatedDTO;
+import ro.agilehub.javacourse.car.hire.rental.api.model.RentalDTO;
 import ro.agilehub.javacourse.car.hire.rental.api.specification.RentalApi;
+import ro.agilehub.javacourse.car.hire.rental.client.core.specification.FleetApi;
+import ro.agilehub.javacourse.car.hire.rental.client.core.specification.UserApi;
 import ro.agilehub.javacourse.car.hire.rental.controller.mapper.JsonPatchDTOMapper;
 import ro.agilehub.javacourse.car.hire.rental.controller.mapper.RentalDTOMapper;
 import ro.agilehub.javacourse.car.hire.rental.service.RentalService;
+import ro.agilehub.javacourse.car.hire.rental.service.domain.RentalDO;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,17 +24,19 @@ public class RentalController implements RentalApi {
     private final RentalService rentalService;
     private final RentalDTOMapper mapper;
     private final JsonPatchDTOMapper mapperJsonPatch;
+    private final UserApi userApi;
+    private final FleetApi carApi;
 
-//    @Override
-//    public ResponseEntity<CreatedDTO> addRental(@Valid RentalDTO rentalDTO) {
-//        var rentalDO = map(rentalDTO);
-//        var rentalID = rentalService.addRent(rentalDO);
-//        CreatedDTO createdDTO = new CreatedDTO();
-//        return ResponseEntity
-//                .status(HttpStatus.CREATED)
-//                .body(createdDTO.id(rentalID));
-//    }
-//
+    @Override
+    public ResponseEntity<CreatedDTO> addRental(@Valid RentalDTO rentalDTO) {
+        var rentalDO = map(rentalDTO);
+        var rentalID = rentalService.addRent(rentalDO);
+        CreatedDTO createdDTO = new CreatedDTO();
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(createdDTO.id(rentalID));
+    }
+
 //    @Override
 //    public ResponseEntity<Void> cancelRental(String id) {
 //        rentalService.removeRent(id);
@@ -64,12 +75,12 @@ public class RentalController implements RentalApi {
 //        return ResponseEntity.ok().build();
 //    }
 
-//    private RentalDO map(RentalDTO rentalDTO) {
-//        var carDO = fleetService.findById(rentalDTO.getCar());
-//        var userDO = userService.findById(rentalDTO.getUser());
-//
-//        return mapper.toRentalDO(rentalDTO, carDO, userDO);
-//    }
+    private RentalDO map(RentalDTO rentalDTO) {
+        var userDTO = userApi.getUser(rentalDTO.getUser());
+        var carDTO = carApi.getCar(rentalDTO.getCar());
+
+        return mapper.toRentalDO(rentalDTO, carDTO, userDTO);
+    }
 
 
 }
