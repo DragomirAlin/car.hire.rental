@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import ro.agilehub.javacourse.car.hire.rental.client.core.specification.FleetApi;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RentalServiceImpl implements RentalService {
@@ -32,8 +34,11 @@ public class RentalServiceImpl implements RentalService {
     @Override
     public String addRent(RentalDO rentalDO) {
         Rental rent = mapper.toRental(rentalDO);
-        return rentalRepository.save(rent)
-                .get_id()
+
+        var rentalCreated = rentalRepository.save(rent);
+
+        log.info("Rental {} id has just been created.", rentalCreated.get_id().toString());
+        return rentalCreated.get_id()
                 .toString();
     }
 
@@ -44,6 +49,7 @@ public class RentalServiceImpl implements RentalService {
                 .orElseThrow();
 
         rentalRepository.delete(rent);
+        log.info("The rental with {} id was deleted.", id);
     }
 
     @Override
@@ -52,7 +58,6 @@ public class RentalServiceImpl implements RentalService {
                 .findById(new ObjectId(id))
                 .map(this::map)
                 .orElseThrow();
-
     }
 
     @Override
@@ -74,6 +79,7 @@ public class RentalServiceImpl implements RentalService {
 
         var rentalUpdated = rentalRepository.save(rentalPatched);
 
+        log.info("The rental has just been updated with id {}.", rentalUpdated.get_id());
         return map(rentalUpdated);
     }
 
@@ -83,10 +89,9 @@ public class RentalServiceImpl implements RentalService {
         return objectMapper.treeToValue(patched, Rental.class);
     }
 
-    public RentalDO map(Rental rental){
+    public RentalDO map(Rental rental) {
         var userDTO = userApi.getUser(rental.getUser_id());
         var carDTO = carApi.getCar(rental.getCar_id());
-
 
         return mapper.toRentalDO(rental, userDTO.getBody(), carDTO.getBody());
     }
