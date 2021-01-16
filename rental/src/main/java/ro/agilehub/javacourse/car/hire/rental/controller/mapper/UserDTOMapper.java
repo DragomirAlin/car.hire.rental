@@ -18,18 +18,21 @@ public interface UserDTOMapper {
     @Mapping(target = "username", source = "userDO.username")
     @Mapping(target = "firstname", source = "userDO.firstname")
     @Mapping(target = "lastname", source = "userDO.lastname")
+    @Mapping(target = "country", source = "country")
+    @Mapping(target = "driverLicense", source = "userDO.driverLicense")
+    @Mapping(target = "status", source = "userDO.status")
     @Mapping(target = "title", source = "userDO.title")
-    @Mapping(target = "countryofresidence", source = "userDO.countryDO.isoCode")
     UserResponseDTO toUserResponseDTO(UserDO userDO);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "id", source = "userDTO.id")
     @Mapping(target = "email", source = "userDTO.email")
     @Mapping(target = "username", source = "userDTO.username")
     @Mapping(target = "firstname", source = "userDTO.firstname")
     @Mapping(target = "lastname", source = "userDTO.lastname")
+    @Mapping(target = "country", source = "country")
+    @Mapping(target = "driverLicense", source = "userDTO.driverLicense")
+    @Mapping(target = "status", source = "userDTO.status")
     @Mapping(target = "title", source = "userDTO.title")
-    @Mapping(target = "countryDO", source = "countryDO")
-    @Mapping(target = "driverlicensenumber", source = "userDTO.driverlicensenumber")
-    UserDO toUserDO(UserDTO userDTO, CountryDO countryDO);
+    UserDO toUserDO(UserResponseDTO userDTO);
 
 }

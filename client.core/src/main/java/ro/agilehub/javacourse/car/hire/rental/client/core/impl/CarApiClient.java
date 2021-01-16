@@ -15,13 +15,12 @@ import java.util.NoSuchElementException;
 public interface CarApiClient extends FleetApi {
     String CORE = "core";
 
+
     @Override
     @CircuitBreaker(name = CORE, fallbackMethod = "coreFallback")
     @RateLimiter(name = CORE)
-    @GetMapping(value = "/fleet/{id}")
-    default ResponseEntity<CarResponseDTO> getCar(String id) {
-        return null;
-    }
+    @GetMapping(value = "/car/{id}")
+    ResponseEntity<CarResponseDTO> getCar(String id);
 
     default ResponseEntity<CarResponseDTO> coreFallback(Integer id, CallNotPermittedException exception) {
         throw new NoSuchElementException();

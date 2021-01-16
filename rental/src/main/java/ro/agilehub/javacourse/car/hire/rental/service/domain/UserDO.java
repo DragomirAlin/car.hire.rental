@@ -17,6 +17,7 @@ public class UserDO {
     private String firstname;
     private String lastname;
     private String title;
-    private CountryDO countryDO;
-    private long driverlicensenumber;
+    private String country;
+    private long driverLicense;
+    private String status;
 }

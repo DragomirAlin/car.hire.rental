@@ -265,19 +265,18 @@ components:
         lastname:
           type: string
           description: last name of the user
-        countryofresidence:
+        country:
           type: string
           description: country of residence of the user
         title:
           type: string
           description: title of the user
-        driverlicensenumber:
+        driverLicense:
           type: integer
           format: int32
           description: driver`s license number of the user
         status:
           type: string
-          enum: [ ACTIVE, CANCELLED ]
           description: the status of the user
     UserResponseDTO:
       allOf:
@@ -320,7 +319,6 @@ components:
           type: string
         status:
           type: string
-          enum: [ACTIVE, CANCELLED]
           description: the status of the car
 
     CarResponseDTO:

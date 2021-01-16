@@ -10,12 +10,13 @@ import lombok.*;
 public class CarDO {
 
     private String id;
-    private MakeDO makeDO;
+    private String make;
     private String model;
     private int year;
     private int mileage;
     private String fuel;
     private String carClazz;
     private String registrationNumber;
+    private String status;
 
 }

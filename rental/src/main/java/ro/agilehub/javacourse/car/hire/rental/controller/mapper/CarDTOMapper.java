@@ -13,7 +13,7 @@ import ro.agilehub.javacourse.car.hire.rental.service.mapper.ObjectIdMapper;
 public interface CarDTOMapper {
 
     @Mapping(target = "id", source = "carDO.id")
-    @Mapping(target = "make", source = "carDO.makeDO.makeName")
+    @Mapping(target = "make", source = "carDO.make")
     @Mapping(target = "model", source = "carDO.model")
     @Mapping(target = "year", source = "carDO.year")
     @Mapping(target = "mileage", source = "carDO.mileage")
@@ -21,12 +21,13 @@ public interface CarDTOMapper {
     @Mapping(target = "carClazz", source = "carDO.carClazz")
     CarResponseDTO toCarResponseDTO(CarDO carDO);
 
-    @Mapping(target = "makeDO", source = "makeDO")
+    @Mapping(target = "id", source = "carDTO.id")
+    @Mapping(target = "make", source = "carDTO.make")
     @Mapping(target = "model", source = "carDTO.model")
     @Mapping(target = "year", source = "carDTO.year")
     @Mapping(target = "mileage", source = "carDTO.mileage")
     @Mapping(target = "fuel", source = "carDTO.fuel")
     @Mapping(target = "carClazz", source = "carDTO.carClazz")
-    CarDO toCarDO(CarDTO carDTO, MakeDO makeDO);
+    CarDO toCarDO(CarResponseDTO carDTO);
 
 }
