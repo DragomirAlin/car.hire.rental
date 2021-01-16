@@ -2,10 +2,11 @@ package ro.agilehub.javacourse.car.hire.rental.controller.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ro.agilehub.javacourse.car.hire.rental.api.model.*;
-import ro.agilehub.javacourse.car.hire.rental.service.domain.CarDO;
+import ro.agilehub.javacourse.car.hire.rental.api.model.RentalDTO;
+import ro.agilehub.javacourse.car.hire.rental.api.model.RentalResponseDTO;
+import ro.agilehub.javacourse.car.hire.rental.client.core.model.CarResponseDTO;
+import ro.agilehub.javacourse.car.hire.rental.client.core.model.UserResponseDTO;
 import ro.agilehub.javacourse.car.hire.rental.service.domain.RentalDO;
-import ro.agilehub.javacourse.car.hire.rental.service.domain.UserDO;
 import ro.agilehub.javacourse.car.hire.rental.service.mapper.ObjectIdMapper;
 
 

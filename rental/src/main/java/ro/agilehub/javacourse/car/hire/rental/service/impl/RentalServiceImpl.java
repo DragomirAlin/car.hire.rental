@@ -23,6 +23,7 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     public String addRent(RentalDO rentalDO) {
+
         Rental rent = mapper.toRental(rentalDO);
 
         return rentalRepository.save(rent)

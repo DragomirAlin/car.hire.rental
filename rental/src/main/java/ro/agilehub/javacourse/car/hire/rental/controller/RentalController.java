@@ -37,12 +37,12 @@ public class RentalController implements RentalApi {
                 .body(createdDTO.id(rentalID));
     }
 
-//    @Override
-//    public ResponseEntity<Void> cancelRental(String id) {
-//        rentalService.removeRent(id);
-//        return ResponseEntity.ok().build();
-//    }
-//
+    @Override
+    public ResponseEntity<Void> cancelRental(String id) {
+        rentalService.removeRent(id);
+        return ResponseEntity.ok().build();
+    }
+
 //    @Override
 //    public ResponseEntity<RentalResponseDTO> getRental(String id) {
 //        var rentalResponseDTO = mapper
@@ -79,7 +79,7 @@ public class RentalController implements RentalApi {
         var userDTO = userApi.getUser(rentalDTO.getUser());
         var carDTO = carApi.getCar(rentalDTO.getCar());
 
-        return mapper.toRentalDO(rentalDTO, carDTO, userDTO);
+        return mapper.toRentalDO(rentalDTO, carDTO.getBody(), userDTO.getBody());
     }
 
 
