@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface RentalService {
 
-    String addRent(RentalDO rentalDO);
-    void removeRent(String id);
+    String addRental(RentalDO rentalDO);
+    void removeRental(String id);
     RentalDO findById(String id);
     List<RentalDO> findAll();
-    RentalDO updateRent(String id, List<JsonPatch> jsonPatch) throws JsonPatchException, JsonProcessingException;
+    RentalDO updateRental(String id, List<JsonPatch> jsonPatch) throws JsonPatchException, JsonProcessingException;
 }

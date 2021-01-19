@@ -37,7 +37,7 @@ public class RentalController implements RentalApi {
     @Override
     public ResponseEntity<CreatedDTO> addRental(@Valid RentalDTO rentalDTO) {
         var rentalDO = map(rentalDTO);
-        var rentalID = rentalService.addRent(rentalDO);
+        var rentalID = rentalService.addRental(rentalDO);
         CreatedDTO createdDTO = new CreatedDTO();
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -46,7 +46,7 @@ public class RentalController implements RentalApi {
 
     @Override
     public ResponseEntity<Void> cancelRental(String id) {
-        rentalService.removeRent(id);
+        rentalService.removeRental(id);
         return ResponseEntity.ok().build();
     }
 
@@ -73,7 +73,7 @@ public class RentalController implements RentalApi {
         List<JsonPatch> jsonPatchList = jsonPatchDTO.stream().map(mapperJsonPatch::toJsonPatch).collect(toList());
         RentalDO rentalDO = null;
         try {
-            rentalDO = rentalService.updateRent(id, jsonPatchList);
+            rentalDO = rentalService.updateRental(id, jsonPatchList);
         } catch (JsonPatchException e) {
             e.printStackTrace();
         } catch (JsonProcessingException e) {

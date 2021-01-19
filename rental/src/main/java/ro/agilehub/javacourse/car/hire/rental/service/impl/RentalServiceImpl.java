@@ -32,7 +32,7 @@ public class RentalServiceImpl implements RentalService {
     private final FleetApi carApi;
 
     @Override
-    public String addRent(RentalDO rentalDO) {
+    public String addRental(RentalDO rentalDO) {
         Rental rent = mapper.toRental(rentalDO);
 
         var rentalCreated = rentalRepository.save(rent);
@@ -43,7 +43,7 @@ public class RentalServiceImpl implements RentalService {
     }
 
     @Override
-    public void removeRent(String id) {
+    public void removeRental(String id) {
         var rent = rentalRepository
                 .findById(new ObjectId(id))
                 .orElseThrow();
@@ -70,7 +70,7 @@ public class RentalServiceImpl implements RentalService {
     }
 
     @Override
-    public RentalDO updateRent(String id, List<JsonPatch> jsonPatch) throws JsonPatchException, JsonProcessingException {
+    public RentalDO updateRental(String id, List<JsonPatch> jsonPatch) throws JsonPatchException, JsonProcessingException {
         com.github.fge.jsonpatch.JsonPatch patch = objectMapper.convertValue(jsonPatch, com.github.fge.jsonpatch.JsonPatch.class);
         var rental = rentalRepository.findById(new ObjectId(id)).orElseThrow();
 
