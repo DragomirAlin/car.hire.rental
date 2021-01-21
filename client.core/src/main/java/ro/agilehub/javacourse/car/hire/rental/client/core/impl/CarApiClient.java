@@ -23,14 +23,14 @@ public interface CarApiClient extends FleetApi {
     @CircuitBreaker(name = CORE, fallbackMethod = "coreFallback")
     @RateLimiter(name = CORE)
     @GetMapping(value = "/fleet/{id}")
-    ResponseEntity<CarResponseDTO> getCar(String id);
+    ResponseEntity<CarResponseDTO> getCar(@PathVariable("id") String id);
 
 
-    default ResponseEntity<CarResponseDTO> coreFallback(Integer id, CallNotPermittedException exception) {
+    default ResponseEntity<CarResponseDTO> coreFallback(String id, CallNotPermittedException exception) {
         throw new NoSuchElementException();
     }
 
-    default ResponseEntity<CarResponseDTO> coreFallback(Integer id, Exception exception) {
+    default ResponseEntity<CarResponseDTO> coreFallback(String id, Exception exception) {
         throw new RuntimeException();
     }
 }

@@ -23,13 +23,13 @@ public interface UserApiClient extends UserApi {
     @CircuitBreaker(name = CORE, fallbackMethod = "coreFallback")
     @RateLimiter(name = CORE)
     @GetMapping(value = "/user/{id}")
-    ResponseEntity<UserResponseDTO> getUser(String id);
+    ResponseEntity<UserResponseDTO> getUser(@PathVariable("id") String id);
 
-    default ResponseEntity<UserResponseDTO> coreFallback(Integer id, CallNotPermittedException exception) {
+    default ResponseEntity<UserResponseDTO> coreFallback(String id, CallNotPermittedException exception) {
         throw new NoSuchElementException();
     }
 
-    default ResponseEntity<UserResponseDTO> coreFallback(Integer id, Exception exception) {
+    default ResponseEntity<UserResponseDTO> coreFallback(String id, Exception exception) {
         throw new RuntimeException();
     }
 
