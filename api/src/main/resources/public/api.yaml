@@ -1,27 +1,25 @@
 openapi: 3.0.1
 info:
-  title: Car Hire Rental
+  title: Car Hire API
   version: 0.1.0
   contact:
-    name: Vlad Carcu
-  description: Car Hire Rental API
+    name: Dragomir Alin
+  description: Car Hire API
 servers:
-  - url: http://localhost:{port}
+  - url: http://localhost:8090
     description: local environment
     variables:
       port:
         default: '8090'
 tags:
   - name: rental
-    description: Rental resource
+    description: Rental resource endpoint
 
 security:
   - oAuth:
       - write
       - read
-
 paths:
-  # The endpoints for the rental resource
   /rental:
     get:
       tags:
@@ -161,7 +159,6 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/ServerError'
-
 components:
   responses:
     Created:
@@ -277,6 +274,7 @@ components:
           description: driver`s license number of the user
         status:
           type: string
+          enum: [ ACTIVE, CANCELLED ]
           description: the status of the user
     UserResponseDTO:
       allOf:
@@ -319,6 +317,7 @@ components:
           type: string
         status:
           type: string
+          enum: [ACTIVE, CANCELLED]
           description: the status of the car
 
     CarResponseDTO:
