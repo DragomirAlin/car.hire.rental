@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import ro.agilehub.javacourse.car.hire.rental.client.core.model.CarDTO;
 import ro.agilehub.javacourse.car.hire.rental.client.core.model.CarResponseDTO;
-import ro.agilehub.javacourse.car.hire.rental.client.core.model.UserDTO;
 import ro.agilehub.javacourse.car.hire.rental.client.core.specification.FleetApi;
 
 import java.util.NoSuchElementException;
@@ -23,14 +22,13 @@ public interface CarApiClient extends FleetApi {
     @CircuitBreaker(name = CORE, fallbackMethod = "coreFallback")
     @RateLimiter(name = CORE)
     @GetMapping(value = "/fleet/{id}")
-    ResponseEntity<CarResponseDTO> getCar(@PathVariable("id") String id);
+    ResponseEntity<CarResponseDTO> getCar(@PathVariable String id);
 
-
-    default ResponseEntity<CarResponseDTO> coreFallback(String id, CallNotPermittedException exception) {
+    default ResponseEntity<CarDTO> coreFallback(String id, CallNotPermittedException exception) {
         throw new NoSuchElementException();
     }
 
-    default ResponseEntity<CarResponseDTO> coreFallback(String id, Exception exception) {
+    default ResponseEntity<CarDTO> coreFallback(String id, Exception exception) {
         throw new RuntimeException();
     }
 }

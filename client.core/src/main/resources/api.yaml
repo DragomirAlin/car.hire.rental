@@ -16,6 +16,8 @@ tags:
     description: User resource endpoint
   - name: fleet
     description: Fleet management resource endpoint
+  - name: rental
+    description: Rental resource endpoint
 
 security:
   - oAuth:
@@ -63,13 +65,13 @@ paths:
               $ref: '#/components/schemas/UserDTO'
             example:
               email: alin@carhire.com
-              password: mypa$$w0rd!@$
+              password: pass
               username: dragomiralin
               firstname: Dragomir
               title: Employee
               lastname: Alin
-              countryofresidence: ROU
-              driverlicensenumber: 221004
+              country: ROU
+              driverLicense: 221004
               status: ACTIVE
       responses:
         '201':
@@ -86,18 +88,21 @@ paths:
           $ref: '#/components/responses/ServerError'
 
   /user/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: int32
+
+    # Get a user by id
     get:
       tags:
         - user
-      summary: get user
-      description: returns the details for a user, based on id
+      summary: get a user
+      description: returns the details for a user, based on id, except the password
       operationId: getUser
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: success
@@ -108,60 +113,6 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/ServerError'
-    patch:
-      tags:
-        - user
-      summary: update user
-      description: update user
-      operationId: updateUser
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        $ref: '#/components/requestBodies/PatchBody'
-      responses:
-        '200':
-          description: success
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/ServerError'
-    delete:
-      tags:
-        - user
-      summary: remove a user
-      description: delete a user identified by id
-      operationId: removeUser
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: success
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
@@ -208,11 +159,13 @@ paths:
             schema:
               $ref: '#/components/schemas/CarDTO'
             example:
-              make: test
+              make: OFF-ROAD
               model: Dacia
               year: 2019
               mileage: 120031
               fuel: Diesel
+              carClazz: car
+              registrationNumber: BV12
               status: ACTIVE
       responses:
         '201':
@@ -262,18 +215,20 @@ paths:
           $ref: '#/components/responses/ServerError'
 
   /fleet/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+
+    # Get a car by id
     get:
       tags:
         - fleet
-      summary: get a fleet
-      description: returns the details for an user, based on id
+      summary: get a car
+      description: returns the details for a car, based on id
       operationId: getCar
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: success
@@ -284,8 +239,6 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
@@ -463,6 +416,7 @@ components:
           description: driver`s license number of the user
         status:
           type: string
+          enum: [ ACTIVE, CANCELLED ]
           description: the status of the user
     UserResponseDTO:
       allOf:
@@ -505,6 +459,7 @@ components:
           type: string
         status:
           type: string
+          enum: [ACTIVE, CANCELLED]
           description: the status of the car
 
     CarResponseDTO:
