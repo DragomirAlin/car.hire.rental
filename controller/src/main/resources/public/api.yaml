@@ -1,0 +1,378 @@
+openapi: 3.0.1
+info:
+  title: Car Hire API
+  version: 0.1.0
+  contact:
+    name: Dragomir Alin
+  description: Car Hire API
+servers:
+  - url: http://localhost:8090
+    description: local environment
+    variables:
+      port:
+        default: '8090'
+tags:
+  - name: rental
+    description: Rental resource endpoint
+
+security:
+  - oAuth:
+      - write
+      - read
+paths:
+  /rental:
+    get:
+      tags:
+        - rental
+      summary: get all rentals details
+      description: returns a list of all rentals, without any filtering
+      operationId: getRentals
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RentalResponseDTO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      tags:
+        - rental
+      summary: add a new rental
+      description: add a new rental and returns it
+      operationId: addRental
+      requestBody:
+        description: The data of the rental to insert.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RentalDTO'
+      responses:
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /rental/{id}:
+    get:
+      tags:
+        - rental
+      summary: get a rental
+      description: return the details for a rental, based on id
+      operationId: getRental
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentalResponseDTO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    patch:
+      tags:
+        - rental
+      summary: update rental
+      description: update rental
+      operationId: updateRental
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/PatchBody'
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentalResponseDTO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    delete:
+      tags:
+        - rental
+      summary: remove a rental
+      description: delete a rental identified by id
+      operationId: cancelRental
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+components:
+  responses:
+    Created:
+      description: created with success
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreatedDTO'
+    NotFound:
+      description: not found
+    Unauthorized:
+      description: unauthorized
+    BadRequest:
+      description: bad request
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ValidationDTO'
+    ServerError:
+      description: internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDTO'
+
+  requestBodies:
+    PatchBody:
+      description: A message in JsonPatch format
+      required: true
+      content:
+        application/json-patch+json:
+          schema:
+            $ref: '#/components/schemas/PatchBody'
+
+  schemas:
+    CreatedDTO:
+      type: object
+      properties:
+        id:
+          type: string
+    PatchBody:
+      items:
+        $ref: '#/components/schemas/JsonPatchDTO'
+    JsonPatchDTO:
+      type: object
+      description: A JSONPatch document as defined by RFC 6902.
+      required:
+        - 'op'
+        - 'path'
+        - 'value'
+      properties:
+        op:
+          type: string
+          description: The operation to be performed
+          enum:
+            - 'add'
+            - 'remove'
+            - 'replace'
+            - 'move'
+            - 'copy'
+            - 'test'
+        path:
+          type: string
+          description: A JSON-Pointer
+        value:
+          type: object
+          description: The value to be used within the operations.
+        from:
+          type: string
+          description: A string containing a JSON Pointer value.
+    ValidationDTO:
+      type: object
+      properties:
+        code:
+          type: string
+        field:
+          type: string
+        description:
+          type: string
+    ErrorDTO:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    UserDefaultObject:
+      type: object
+      properties:
+        email:
+          type: string
+          description: email of the user
+        username:
+          type: string
+          description: username of the user
+        firstname:
+          type: string
+          description: first name of the user
+        lastname:
+          type: string
+          description: last name of the user
+        country:
+          type: string
+          description: country of residence of the user
+        title:
+          type: string
+          description: title of the user
+        driverLicense:
+          type: integer
+          format: int32
+          description: driver`s license number of the user
+        status:
+          type: string
+          enum: [ ACTIVE, CANCELLED ]
+          description: the status of the user
+    UserResponseDTO:
+      allOf:
+        - $ref: '#/components/schemas/UserDefaultObject'
+        - type: object
+          properties:
+            id:
+              type: string
+              description: id of the user
+    UserDTO:
+      allOf:
+        - $ref: '#/components/schemas/UserDefaultObject'
+        - type: object
+          properties:
+            password:
+              type: string
+              format: password
+              description: password of the user
+    CarDTO:
+      type: object
+      properties:
+        make:
+          type: string
+          description: make param
+        model:
+          type: string
+          description: model of the car
+        year:
+          type: integer
+          format: int32
+          description: year of manufacture of the car
+        mileage:
+          type: integer
+          format: int32
+          description: car mileage
+        fuel:
+          type: string
+          description: type of fuel
+        carClazz:
+          type: string
+        status:
+          type: string
+          enum: [ACTIVE, CANCELLED]
+          description: the status of the car
+
+    CarResponseDTO:
+      allOf:
+        - $ref: '#/components/schemas/CarDTO'
+        - type: object
+          properties:
+            id:
+              type: string
+              description: id car
+    RentalDefaultObject:
+      type: object
+      properties:
+        startDate:
+          type: string
+          description: start date and time
+          example: "2020-11-14T12:30:00Z"
+        endDate:
+          type: string
+          description: end date and time
+          example: "2020-11-19T12:30:00Z"
+        status:
+          type: string
+          enum: [ ACTIVE, CANCELLED ]
+          description: the status of the
+    RentalDTO:
+      allOf:
+        - $ref: '#/components/schemas/RentalDefaultObject'
+        - type: object
+          properties:
+            user:
+              type: string
+              description: user id
+            car:
+              type: string
+              description: car id
+    RentalResponseDTO:
+      allOf:
+        - $ref: '#/components/schemas/RentalDefaultObject'
+        - type: object
+          properties:
+            id:
+              type: string
+              description: rent id
+            user:
+              $ref: '#/components/schemas/UserResponseDTO'
+            car:
+              $ref: '#/components/schemas/CarResponseDTO'
+  securitySchemes:
+    oAuth:
+      type: oauth2
+      description: This API uses OAuth2 with the password flow
+      flows:
+        password:
+          tokenUrl: http://localhost:8080/oauth/token
+          scopes:
+            read: get information from the API
+            write: use the API to make changes to the supporting data model
